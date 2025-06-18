@@ -1,0 +1,11 @@
+#+STARTUP: showeverything
+#+STARTUP: literallinks
+#+OPTIONS: toc:nil num:nil author:nil
+* setup-cached-cask
+:PROPERTIES:
+:CUSTOM_ID: setup-cached-cask
+:END:
+[[https://github.com/pkryger/difftastic.el/actions/workflows/test.yml][https://github.com/pkryger/setup-cached-cask/actions/workflows/test.yml/badge.svg]]
+
+
+Setup cached Cask for Github Actions workflow

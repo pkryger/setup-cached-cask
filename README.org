@@ -1,11 +1,150 @@
+#+TITLE: Setup Cached Cask
 #+STARTUP: showeverything
 #+STARTUP: literallinks
 #+OPTIONS: toc:nil num:nil author:nil
-* setup-cached-cask
+* Setup Cached Cask
 :PROPERTIES:
 :CUSTOM_ID: setup-cached-cask
 :END:
-[[https://github.com/pkryger/difftastic.el/actions/workflows/test.yml][https://github.com/pkryger/setup-cached-cask/actions/workflows/test.yml/badge.svg]]
 
+A GitHub Action to install and cache Cask packages for Emacs Lisp project
+workflows. This action extends the functionality of standard Cask setup by
+adding intelligent caching with intention of speeding up subsequent workflow
+runs.
 
-Setup cached Cask for Github Actions workflow
+* Basic Usage
+:PROPERTIES:
+:CUSTOM_ID: basic-usage
+:END:
+
+This action is meant to replace [[https://github.com/cask/setup-cask][cask/setup-cask]] (it actually calls it
+internally). The recommended usage is relatively simple:
+
+#+BEGIN_SRC yaml
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs-version:
+          - 30.1
+          - snapshot
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Emacs
+      uses: purcell/setup-emacs@master
+      with:
+        version: $ {{ matrix.emacs-version }}
+
+    - name: Setup cached Cask
+      uses: pkryger/setup-cached-cask@main
+      with:
+        emacs-version: {{ matrix.emacs-version}}
+
+    - name: Install dependencies
+      run: cask install
+
+#+END_SRC
+
+A few notes:
+- The =pkryger/setup-cached-cask= action requires a repository checkout and
+  Emacs to be available in =GITHUB_WORKSPACE=, for example see actions
+  "Checkout" and "Setup Emacs" above.  This is to ensure a correct version of
+  Emacs is used to calculate dependencies for the repository.
+- If the repository has been checked out a =path=, use the =path= as a value of
+  =checkout-path= input.
+- The Emacs version is used to disambiguate caches between different Emacs
+  versions that need the same list of dependencies for the repository.  If
+  re-using of dependencies between different Emacs versions is required a
+  placeholder value of =no-emacs-version= can be used as a value of
+  =emacs-version= input. De facto any constant string except =snapshot= can be
+  used.
+- The "Install dependencies" step can be skipped when cache was hit, for
+  example:
+  #+begin_src yaml
+    - name: Setup cached Cask
+      id: setup-cached-cask
+      uses: pkryger/setup-cached-cask@main
+      with:
+        emacs-version: {{ matrix.emacs-version}}
+
+    - name: Install dependencies
+      if: steps.setup-cached-cask.outputs.cache-hit != 'true'
+      run: cask install
+  #+end_src
+
+* Inputs
+:PROPERTIES:
+:CUSTOM_ID: inputs
+:END:
+
+#+begin_src yaml
+inputs:
+  checkout-path:
+    description: >
+      The value of relative path under $GITHUB_WORKSPACE where the repository
+      has been checked out.
+
+  emacs-version:
+    description: >
+      The version of Emacs to create the cache for, for example: 30.1,
+      snapshot.  If the value is "snapshot" then use latest commit hash found
+      in https://github.com/purcell/nic-emacs-ci repository.  If the value is
+      not specified then use version from "cask emacs --version".
+
+  cask-version:
+    description: >
+      The version of Cask to use. See https://github.com/cask/setup-cask.
+    default: 'snapshot'
+
+#+end_src
+
+* Outputs
+:PROPERTIES:
+:CUSTOM_ID: outputs
+:END:
+
+#+begin_src yaml
+outputs:
+  key:
+    description: >
+      A key used for the created cache for Cask packages.
+    value: ${{ steps.get-cache-key.outputs.key }}
+
+  cache-hit:
+    description: >
+      A boolean value to indicate an exact match was found for the primary key.
+
+#+end_src
+
+** Contributing
+
+Contributions are welcome! Please feel free to:
+
+- Report bugs
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+* License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+* Related Actions
+
+- [[https://github.com/actions/cache][actions/cache]] - The underlying caching mechanism
+- [[https://github.com/purcell/setup-emacs][purcell/setup-emacs]] - Setup Emacs for GitHub Actions
+- [[https://github.com/cask/setup-cask][cask/setup-cask]] - Original setup-cask action
+
+* Support
+
+If you encounter any issues or have questions:
+
+1. Check the [[https://github.com/pkryger/setup-cached-cask/issues][Issues]] page
+2. Create a new issue with detailed information about your problem
+3. Include your workflow file and error messages when reporting bugs

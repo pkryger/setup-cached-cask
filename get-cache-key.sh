@@ -5,7 +5,7 @@ if [ $# -eq 0 ] || [ $# -gt 2 ]; then
    exit 1
 fi
 
-set -eu
+set -euo pipefail
 
 if [ -z "${GITHUB_ACTION_PATH+x}" ]; then
     GITHUB_ACTION_PATH=$(git rev-parse --show-toplevel)

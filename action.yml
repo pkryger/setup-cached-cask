@@ -25,6 +25,10 @@ outputs:
       A key used for the created cache for Cask packages.
     value: ${{ steps.get-cache-key.outputs.key }}
 
+  cache-hit:
+    description: >
+      A boolean value to indicate an exact match was found for the primary key.
+
 runs:
   using: "composite"
   steps:
@@ -43,8 +47,15 @@ runs:
                         ${{ inputs.emacs-version }})" \
             >> "$GITHUB_OUTPUT"
 
-    - name: 'Cache Cask packages'
+    - name: Cache Cask packages
+      id: cache-cask-packages
       uses: actions/cache@v4
       with:
         path: .cask
         key: ${{ steps.get-cache-key.outputs.key }}
+
+    - name: Set cache-hit
+      shell: bash
+      run: |
+        echo "cache-hit=${{ steps.cache-cask-packages.outputs.cache-hit }}" \
+            >> "$GITHUB_OUTPUT"

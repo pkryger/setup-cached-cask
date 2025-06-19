@@ -50,7 +50,10 @@ jobs:
 
 #+END_SRC
 
-A few notes:
+** Basic Usage Notes
+:PROPERTIES:
+:CUSTOM_ID: basic-usage-notes
+:END:
 - The =pkryger/setup-cached-cask= action requires a repository checkout and
   Emacs to be available in =GITHUB_WORKSPACE=, for example see actions
   "Checkout" and "Setup Emacs" above.  This is to ensure a correct version of

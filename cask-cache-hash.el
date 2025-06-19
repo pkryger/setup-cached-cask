@@ -64,6 +64,13 @@ archives, including their would be installed versions."
   (let* ((default-directory (string-trim
                              (shell-command-to-string
                               "git rev-parse --show-toplevel")))
+         (cask-filename (or (when-let* ((filename (getenv "CASK_CACHE_CASK_FILENAME"))
+                                        ((not (string-match (rx string-start
+                                                                (zero-or-more whitespace)
+                                                                string-end)
+                                                            filename))))
+                              filename)
+                            cask-filename))
          (bundle (cask-setup default-directory))
          (packages (cask-cache-hash--packages-to-install bundle)))
     (princ (secure-hash 'sha256 (format "%S"  packages)))))

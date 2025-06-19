@@ -101,6 +101,11 @@ inputs:
       The version of Cask to use. See https://github.com/cask/setup-cask.
     default: 'snapshot'
 
+  cask-filename:
+    description: >
+      The name of Cask file to use
+    default: 'Cask'
+
 #+end_src
 
 * Outputs

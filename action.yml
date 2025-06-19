@@ -19,6 +19,11 @@ inputs:
       The version of Cask to use. See https://github.com/cask/setup-cask.
     default: 'snapshot'
 
+  cask-filename:
+    description: >
+      The name of Cask file to use
+    default: 'Cask'
+
 outputs:
   key:
     description: >
@@ -46,6 +51,8 @@ runs:
                         ${{ github.workspace }}/${{ inputs.checkout-path }} \
                         ${{ inputs.emacs-version }})" \
             >> "$GITHUB_OUTPUT"
+      env:
+        CASK_CACHE_FILE_NAME: ${{ inputs.cask-filename }}
 
     - name: Cache Cask packages
       id: cache-cask-packages

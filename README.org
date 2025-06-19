@@ -111,6 +111,21 @@ inputs:
 
 #+end_src
 
+
+** Inputs Notes
+:PROPERTIES:
+:CUSTOM_ID: inputs-notes
+:END:
+- The input =cask-filename= is a non standard =Cask= extension.  If it is set
+  to a value different than default, it is recommended that subsequent =cask=
+  calls are made from withing Emacs with ~cask-filename~ set to the same value.
+  For example:
+  #+begin_src bash
+cask eval "(progn
+             (require 'cask)
+             (let ((cask-filename \"Non-Default-Cask\"))
+               (cask-install (cask-setup default-directory))"
+  #+end_src
 * Outputs
 :PROPERTIES:
 :CUSTOM_ID: outputs

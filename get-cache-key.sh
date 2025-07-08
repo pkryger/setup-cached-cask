@@ -16,16 +16,22 @@ cd "${1}"
 emacs_version=
 
 if [[ $# -eq 2 ]]; then
-    emacs_version=$(echo "${2}" \
+    emacs_version=$(echo "${2}"                                         \
                         | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')
 fi
 
 if [[ -z "${emacs_version}" ]]; then
-    emacs_version=$(cask emacs --version \
+    emacs_version=$(cask emacs --version                            \
                         | sed -ne 's/[[:space:]]//g;1s/.*Emacs//p')
-elif [[ "${emacs_version}" == "snapshot" ]]; then
-    emacs_version=$(git ls-remote https://github.com/purcell/nix-emacs-ci.git refs/heads/master \
-                        | sed -e 's/^\([[:xdigit:]]\{7,7\}\).*/nix-emacs-ci@\1/ '\
+elif [[ "${emacs_version}" == "snapshot"
+        || "${emacs_version}" == "release-snapshot" ]]; then
+    if [[ "${emacs_version}" == "snapshot" ]]; then
+        ref=refs/heads/master
+    else
+        ref=refs/heads/emacs-30
+    fi
+    emacs_version=$(git ls-remote https://github.com/emacs-mirror/emacs.git ${ref}  \
+                        | sed -e 's/^\([[:xdigit:]]\{7,7\}\).*/emacs@\1/ '          \
                         | tr -d '\n')
 fi
 
@@ -34,8 +40,8 @@ if [[ -z "${emacs_version}" ]]; then
     exit 1
 fi
 
-cask_sha=$(cask emacs -batch \
-                --load "${GITHUB_ACTION_PATH}/cask-cache-hash.el" \
+cask_sha=$(cask emacs -batch                                        \
+                --load "${GITHUB_ACTION_PATH}/cask-cache-hash.el"   \
                 --funcall cask-cache-hash)
 
 if [[ -z "${cask_sha}" ]]; then

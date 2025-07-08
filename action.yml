@@ -10,8 +10,9 @@ inputs:
   emacs-version:
     description: >
       The version of Emacs to create the cache for, for example: 30.1,
-      snapshot.  If the value is "snapshot" then use latest commit hash found
-      in https://github.com/purcell/nic-emacs-ci repository.  If the value is
+      snapshot.  If the value is "snapshot" or "release-snapshot" then use
+      latest commit hash found in https://github.com/eamcs-mirror/emacs
+      repository on master or emacs-30 branch respectively.  If the value is
       not specified then use version from "cask emacs --version".
 
   cask-version:

@@ -142,6 +142,7 @@ outputs:
   cache-hit:
     description: >
       A boolean value to indicate an exact match was found for the primary key.
+    value: ${{ steps.cache-hit.outputs.cache-hit }}
 
 #+end_src
 

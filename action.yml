@@ -33,6 +33,7 @@ outputs:
   cache-hit:
     description: >
       A boolean value to indicate an exact match was found for the primary key.
+    value: ${{ steps.cache-hit.outputs.cache-hit }}
 
 runs:
   using: "composite"
@@ -62,6 +63,7 @@ runs:
         key: ${{ steps.get-cache-key.outputs.key }}
 
     - name: Set cache-hit
+      id: cache-hit
       shell: bash
       run: |
         echo "cache-hit=${{ steps.cache-cask-packages.outputs.cache-hit }}" \

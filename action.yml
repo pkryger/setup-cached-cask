@@ -49,10 +49,12 @@ runs:
       id: get-cache-key
       shell: bash
       run: |
+        echo echo "::group::Get cache key"
         echo "key=$(${{ github.action_path }}/get-cache-key.sh \
                         ${{ github.workspace }}/${{ inputs.checkout-path }} \
                         ${{ inputs.emacs-version }})" \
             >> "$GITHUB_OUTPUT"
+        echo "::endgroup::"
       env:
         CASK_CACHE_FILE_NAME: ${{ inputs.cask-filename }}
 
